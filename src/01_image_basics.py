@@ -46,16 +46,23 @@ def analyze_image_structure(image):
     :param image: The image array to analyze.
     """
     print(f"Shape: {image.shape}")
-    print(f"  Height: {image.shape[0]} pixels")
-    print(f"  Width: {image.shape[1]} pixels")
-    print(f"  Channels: {image.shape[2]}")
+    print(f"  → Height (rows): {image.shape[0]} pixels")
+    print(f"  → Width (cols):  {image.shape[1]} pixels")
+    print(f"  → Channels:      {image.shape[2]} (RGB)")
     
-    print(f"Data type: {image.dtype}")
-    print(f"Value range: [{image.min()}, {image.max()}]")
+    print(f"\nData type: {image.dtype}")
+    print(f"  → uint8 means: unsigned integer, 0-255 range")
+    print(f"  → This is standard for 8-bit color images")
     
-    memory_mb = image.nbytes / (1024 ** 2)
-    print(f"Memory: {memory_mb:.2f} MB")
+    print(f"\nValue range: [{image.min()}, {image.max()}]")
+    
+    memory_bytes = image.nbytes
+    memory_mb = memory_bytes / (1024 * 1024)
+    print(f"\nMemory usage: {memory_mb:.2f} MB")
+    print(f"  → Calculation: {image.shape[0]} × {image.shape[1]} × {image.shape[2]} = {memory_bytes:,} bytes")
 
+    # A single 20MP drone image = ~60 MB
+    # A mission with 1000 images = 60 GB of raw data to process!
 
 def visualize_color_channels(image, output_path):
     """
@@ -79,21 +86,19 @@ def visualize_color_channels(image, output_path):
     
     axes[0, 0].imshow(image)
     axes[0, 0].set_title('Original')
-    axes[0, 0].axis('off')
     
     # We use colormaps like 'Reds', 'Greens', 'Blues' to visualize each channel
     axes[0, 1].imshow(red_channel, cmap='Reds')
     axes[0, 1].set_title('Red Channel')
-    axes[0, 1].axis('off')
     
     axes[1, 0].imshow(green_channel, cmap='Greens')
     axes[1, 0].set_title('Green Channel')
-    axes[1, 0].axis('off')
     
     axes[1, 1].imshow(blue_channel, cmap='Blues')
     axes[1, 1].set_title('Blue Channel')
-    axes[1, 1].axis('off')
-    
+
+    for ax in axes.flatten(): ax.axis('off')    
+
     plt.tight_layout()
     plt.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close()
@@ -162,16 +167,15 @@ def visualize_edge_detection(image, output_path):
     
     axes[0].imshow(image)
     axes[0].set_title('Original')
-    axes[0].axis('off')
     
     axes[1].imshow(gray, cmap='gray')
     axes[1].set_title('Grayscale')
-    axes[1].axis('off')
     
     axes[2].imshow(edges, cmap='hot')
     axes[2].set_title('Edges (Sobel)')
-    axes[2].axis('off')
     
+    for ax in axes: ax.axis('off')
+
     plt.tight_layout()
     plt.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close()
@@ -212,17 +216,16 @@ def demonstrate_color_thresholding(image, output_path):
     
     axes[0].imshow(image)
     axes[0].set_title('Original')
-    axes[0].axis('off')
     
     # Force the plotter to use the full 0-180 range
     axes[1].imshow(hsv[:, :, 0], cmap='hsv', vmin=0, vmax=180)
     axes[1].set_title('Hue Channel')
-    axes[1].axis('off')
     
     axes[2].imshow(mask, cmap='gray')
     axes[2].set_title('Blue Mask')
-    axes[2].axis('off')
     
+    for ax in axes: ax.axis('off')
+
     plt.tight_layout()
     plt.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close()
